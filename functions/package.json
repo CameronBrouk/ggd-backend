@@ -18,6 +18,7 @@
     "dotenv": "^16.3.1",
     "firebase-admin": "^11.8.0",
     "firebase-functions": "^4.3.1",
+    "stripe": "^12.13.0",
     "twilio": "^4.14.0",
     "zod": "^3.21.4"
   },

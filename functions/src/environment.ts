@@ -7,5 +7,6 @@ export const environment = z
     SENDGRID_KEY: z.string(),
     TWILIO_ACCOUNT_SID: z.string(),
     TWILIO_AUTH_TOKEN: z.string(),
+    STRIPE_KEY: z.string(),
   })
   .parse(dotenv.config().parsed)
