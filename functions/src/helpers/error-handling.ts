@@ -1,11 +1,16 @@
-import { ZodError } from 'zod'
+import { Request, Response } from 'express'
+import { ZodError, ZodObject } from 'zod'
+import * as logger from 'firebase-functions/logger'
 
-export const getZodError = (zodError: ZodError) => ({
+const badRequestBody = {
   status: 400,
   level: 'Client Request',
   title: 'Request Body Incorrect',
   message:
     'The information provided had errors, please edit the information and try again.',
+}
+export const getZodError = (zodError: ZodError) => ({
+  ...badRequestBody,
   description: zodError.issues
     .map((issue) => {
       if (issue.message.includes('Required')) {
@@ -30,3 +35,20 @@ export const getZodError = (zodError: ZodError) => ({
     .join('. '),
   meta: zodError,
 })
+
+export const hasValidBody = (
+  req: Request,
+  res: Response,
+  zodValidator?: ZodObject<any>,
+) => {
+  if (!zodValidator) return true
+  const validation = zodValidator.safeParse(req.body)
+  if (validation.success) return true
+  const error = {
+    ...badRequestBody,
+    ...('error' in validation ? getZodError(validation.error) : {}),
+  }
+  logger.error(error)
+  res.status(400).json(error)
+  return false
+}
