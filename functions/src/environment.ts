@@ -8,5 +8,9 @@ export const environment = z
     TWILIO_ACCOUNT_SID: z.string(),
     TWILIO_AUTH_TOKEN: z.string(),
     STRIPE_KEY: z.string(),
+    JITER_ORG_NAME: z.string(),
+    JITER_API_KEY: z.string(),
+    JITER_SIGNING_SECRET: z.string(),
+    BASE_URL: z.string(),
   })
   .parse(dotenv.config().parsed)

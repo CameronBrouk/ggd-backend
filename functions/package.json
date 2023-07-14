@@ -14,6 +14,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@jiter/node": "^0.5.0",
     "@sendgrid/mail": "^7.7.0",
     "dotenv": "^16.3.1",
     "firebase-admin": "^11.8.0",
