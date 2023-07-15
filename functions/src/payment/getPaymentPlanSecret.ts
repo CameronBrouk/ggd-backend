@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import * as logger from 'firebase-functions/logger'
 import { hasValidBody } from '../helpers/error-handling'
-import { onRequest } from 'firebase-functions/v2/https'
+import { onCall, onRequest } from 'firebase-functions/v2/https'
 import { createPaymentPlan } from './payment.helpers'
 
 const bodyValidator = z.object({
@@ -24,4 +25,18 @@ export const getPaymentPlanSecret = onRequest(async (req, res) => {
   } catch (err: any) {
     res.status(400).json({ error: { message: err?.message } })
   }
+})
+
+export const getPaymentPlanClientSecret = onCall(async (req) => {
+  const { priceId, customerId, unixDateToCancel } = req.data
+  const response = await createPaymentPlan(
+    priceId,
+    customerId,
+    unixDateToCancel,
+  )
+
+  logger.debug(response)
+  console.log(response)
+
+  return { secret: response.latest_invoice.payment_intent.client_secret }
 })

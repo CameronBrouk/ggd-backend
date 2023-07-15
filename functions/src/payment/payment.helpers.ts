@@ -86,11 +86,11 @@ export const createPaymentPlan = async (
   const sub = (await stripe.subscriptions.create({
     customer: customerId,
     items: [{ price: priceId }],
-    billing_cycle_anchor: dateToStart || Math.floor(Date.now() / 1000), // Start billing today if no startDate is given
-    cancel_at_period_end: false,
+    // billing_cycle_anchor: dateToStart || Math.floor(Date.now() / 1000), // Start billing today if no startDate is given
     payment_behavior: 'default_incomplete',
     payment_settings: { save_default_payment_method: 'on_subscription' },
     expand: ['latest_invoice.payment_intent'],
+    collection_method: 'charge_automatically',
     cancel_at: unixDateToCancel,
   })) as SubscriptionReturn
 
