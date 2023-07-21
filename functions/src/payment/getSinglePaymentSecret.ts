@@ -42,5 +42,7 @@ export const getSinglePaymentClientSecret = onCall(async (request) => {
     },
   })
 
+  paymentIntent.latest_charge
+
   return { secret: paymentIntent.client_secret }
 })

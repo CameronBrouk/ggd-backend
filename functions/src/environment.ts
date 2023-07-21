@@ -12,5 +12,6 @@ export const environment = z
     JITER_API_KEY: z.string(),
     JITER_SIGNING_SECRET: z.string(),
     BASE_URL: z.string(),
+    WEBHOOK_SECRET: z.string(),
   })
   .parse(dotenv.config().parsed)

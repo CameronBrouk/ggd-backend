@@ -1,8 +1,7 @@
-import { onRequest } from 'firebase-functions/v2/https'
-import { z } from 'zod'
-import { hasValidBody } from '../helpers/error-handling'
-import { stripe } from '../payment/stripe.helpers'
 import { getFirestore } from 'firebase-admin/firestore'
+import { onCall } from 'firebase-functions/v2/https'
+import { z } from 'zod'
+import { stripe } from '../payment/stripe.helpers'
 
 const bodyValidator = z
   .object({
@@ -13,9 +12,10 @@ const bodyValidator = z
   })
   .strict()
 
-export const createUser = onRequest(async (request, response) => {
-  const { id, ...body } = request.body as z.TypeOf<typeof bodyValidator>
-  if (!hasValidBody(request, response, bodyValidator)) return
+export type User = z.TypeOf<typeof bodyValidator>
+
+export const createBackendUser = onCall<User>(async (request) => {
+  const { id, ...body } = request.data
 
   const database = getFirestore()
 
@@ -26,7 +26,6 @@ export const createUser = onRequest(async (request, response) => {
   const user = {
     id,
     ...body,
-    position: 'undecided',
     stripeCustomerId: stripeCustomer.id,
     createdAt: currentDate,
     updatedAt: currentDate,
@@ -45,11 +44,13 @@ export const createUser = onRequest(async (request, response) => {
     // Create Permissions Document
     await database.collection('permissions').doc(id).set(permissions)
 
-    response.send({
+    return {
       user,
       permissions,
-    })
+    }
   } catch (err) {
-    response.status(200).json(err)
+    return {
+      error: err,
+    }
   }
 })
